@@ -12,6 +12,15 @@
 <script src="../idevices/text/text.js"></script><link rel="stylesheet" href="../idevices/text/text.css">
 <script src="../libs/exe_atools/exe_atools.js"> </script><link rel="stylesheet" href="../libs/exe_atools/exe_atools.css">
 <link rel="stylesheet" href="../content/css/base.css"><script src="../theme/style.js"> </script><link rel="stylesheet" href="../theme/style.css">
+<style>
+.zoomable-image{cursor:zoom-in;transition:transform .2s ease,box-shadow .2s ease}.zoomable-image:hover{transform:scale(1.01);box-shadow:0 10px 28px rgba(0,0,0,.18)}
+#imageLightbox{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.94);padding:24px;align-items:center;justify-content:center;overflow:auto;overscroll-behavior:contain}
+#imageLightbox.open{display:flex}#imageLightbox img{display:block;max-width:96vw;max-height:92vh;width:auto;height:auto;object-fit:contain;background:#fff;box-shadow:0 14px 50px rgba(0,0,0,.48);cursor:zoom-in;transition:max-width .2s ease,max-height .2s ease}
+#imageLightbox.zoomed{align-items:flex-start;justify-content:flex-start}#imageLightbox.zoomed img{max-width:none;max-height:none;cursor:zoom-out;margin:64px auto 24px;min-width:min(1400px,100%)}
+#imageLightboxClose{position:fixed;top:16px;right:20px;z-index:100000;width:48px;height:48px;border:0;border-radius:50%;background:#fff;color:#111;font-size:32px;line-height:44px;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+.zoom-note{display:block;text-align:center;font-size:.9rem;color:#526b73;margin-top:.45rem;font-weight:700}
+@media(max-width:650px){#imageLightbox{padding:10px}#imageLightboxClose{top:10px;right:10px;width:44px;height:44px}#imageLightbox.zoomed img{margin-top:58px;min-width:1100px}}
+</style>
 </head>
 <body class="exe-export exe-web-site">
 <script>document.body.className+=" js"</script>
@@ -55,7 +64,7 @@
 <div class="box-content">
 <div id="idevice-1789141612371-u23wgfsfi" class="idevice_node text" data-idevice-path="../idevices/text/" data-idevice-type="text" data-idevice-component-type="json" data-idevice-json-data="{&quot;ideviceId&quot;:&quot;idevice-1789141612371-u23wgfsfi&quot;}">
 <div class="exe-text-template">
-    <p><img src="https://content.vicensvivesdigital.com/images/ca/prev_1043089_37238874625467045497_res_1024.png" width="1024" height="316" alt="" /></p>
+    <p><img src="https://content.vicensvivesdigital.com/images/ca/prev_1043089_37238874625467045497_res_1024.png" width="1024" height="316" alt="Marc cronològic de l'Antic Règim i la Revolució Francesa" /></p>
 </div>
 </div>
 </div>
@@ -161,5 +170,36 @@ details{background:#fff;border:1px solid var(--line);border-radius:14px;margin:.
 </div></footer>
 </div>
 <p id="made-with-eXe"> <a href="https://exelearning.net/" target="_blank" rel="noopener"> <span>Creat amb eXeLearning <span>(Nova finestra)</span></span></a></p>
+<div id="imageLightbox" aria-hidden="true" role="dialog" aria-label="Visor d'imatge ampliada">
+<button id="imageLightboxClose" type="button" aria-label="Tancar imatge ampliada">×</button>
+<img id="imageLightboxImg" src="" alt="">
+</div>
+<script>
+(function(){
+  var lightbox=document.getElementById('imageLightbox');
+  var lightboxImg=document.getElementById('imageLightboxImg');
+  var closeBtn=document.getElementById('imageLightboxClose');
+  var selector='.page-content img:not(.exe-icon img), .page-content .annex';
+  function closeLightbox(){lightbox.classList.remove('open','zoomed');lightbox.setAttribute('aria-hidden','true');lightboxImg.src='';document.body.style.overflow='';}
+  function openLightbox(img){lightboxImg.src=img.currentSrc||img.src;lightboxImg.alt=img.alt||'Imatge ampliada';lightbox.classList.add('open');lightbox.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';closeBtn.focus();}
+  document.querySelectorAll(selector).forEach(function(img){
+    if(img.closest('.box-icon')) return;
+    img.classList.add('zoomable-image');
+    img.setAttribute('title','Clica per ampliar');
+    img.setAttribute('tabindex','0');
+    img.setAttribute('role','button');
+    img.setAttribute('aria-label',(img.alt?img.alt+'. ':'')+'Clica per ampliar');
+    if(!img.nextElementSibling || !img.nextElementSibling.classList.contains('zoom-note')){
+      var note=document.createElement('span');note.className='zoom-note';note.textContent='🔍 Clica la imatge per ampliar-la';img.insertAdjacentElement('afterend',note);
+    }
+    img.addEventListener('click',function(e){e.preventDefault();openLightbox(img);});
+    img.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openLightbox(img);}});
+  });
+  lightboxImg.addEventListener('click',function(e){e.stopPropagation();lightbox.classList.toggle('zoomed');});
+  closeBtn.addEventListener('click',closeLightbox);
+  lightbox.addEventListener('click',function(e){if(e.target===lightbox)closeLightbox();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lightbox.classList.contains('open'))closeLightbox();});
+})();
+</script>
 </body>
 </html>
